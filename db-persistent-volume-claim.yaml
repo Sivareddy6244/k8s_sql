@@ -11,3 +11,233 @@ spec:
   resources:
     requests:
       storage: 1Gi
+
+
+---
+
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+  name: wishlist-app-ingress
+
+spec:
+  rules:
+    - http: 
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port: 
+                  number: 80
+                  
+                  
+---
+
+
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: postgres-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim
+
+      containers:
+        - name: postgres
+          image: postgres:12-alpine
+          ports:
+            - containerPort: 5432
+
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+
+          env:
+            - name: POSTGRES_USER
+              value: hello_flask
+            - name: POSTGRES_DB
+              value: hello_flask_db
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD
+---
+
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: postgres-service
+
+spec:
+  selector:
+    component: postgres
+
+  type: ClusterIP
+
+  ports:
+    - port: 5432
+      targetPort: 5432
+
+
+
+---
+
+
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: redis-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      component: redis
+
+  template:
+    metadata:
+      labels:
+        component: redis
+
+    spec:
+      containers:
+        - name: redis
+          image: redis:6.0.8
+          ports:
+            - containerPort: 6379
+            
+            
+---
+
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: redis-service
+
+spec:
+  selector:
+    component: redis
+
+  type: ClusterIP
+
+  ports:
+    - port: 6379
+      targetPort: 6379
+      
+      
+---
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: web-deployment
+
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        component: wishlist-app
+    spec:
+      containers:
+        - name: wishlist-app-container
+          image: vagdevik/user-wishlist-k8s:v1
+          ports:
+          - containerPort: 80
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: POSTGRES_HOST
+              value: postgres-service
+            - name: POSTGRES_USER
+              value: hello_flask
+            - name: POSTGRES_PORT
+              value: '5432'
+            - name: POSTGRES_DB
+              value: hello_flask_db
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD
+
+  selector:
+    matchLabels:
+      component: wishlist-app
+      
+      
+---
+
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: web-service
+
+spec:
+  selector:
+    component: wishlist-app
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
