@@ -74,9 +74,9 @@ spec:
 
           env:
             - name: POSTGRES_USER
-              value: hello_flask
+              value: sivareddy
             - name: POSTGRES_DB
-              value: hello_flask_db
+              value: hello_siva_db
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -179,13 +179,13 @@ spec:
             - name: REDIS_PORT
               value: '6379'
             - name: POSTGRES_HOST
-              value: postgres-service
+              value: 172.25.160.2
             - name: POSTGRES_USER
-              value: hello_flask
+              value: sivareddy
             - name: POSTGRES_PORT
               value: '5432'
             - name: POSTGRES_DB
-              value: hello_flask_db
+              value: hello_siva_db
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
