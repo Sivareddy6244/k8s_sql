@@ -95,7 +95,7 @@ spec:
   selector:
     component: postgres
 
-  type: LoadBalancer
+  type: ClusterIP
 
   ports:
     - port: 5432
@@ -146,7 +146,7 @@ spec:
   selector:
     component: redis
 
-  type: LoadBalancer
+  type: ClusterIP
 
   ports:
     - port: 6379
@@ -209,7 +209,7 @@ metadata:
 spec:
   selector:
     component: wishlist-app
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 80
       targetPort: 80
