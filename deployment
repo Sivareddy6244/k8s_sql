@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gke-cloud-sql-quickstart
+spec:
+  selector:
+    matchLabels:
+      app: gke-cloud-sql-app
+  template:
+    metadata:
+      labels:
+        app: gke-cloud-sql-app
+    spec:
+      serviceAccountName: ksa-cloud-sql
+      containers:
+      - name: gke-cloud-sql-app
+        # Replace <LOCATION> with your Artifact Registry location (e.g., us-central1).
+        # Replace <YOUR_PROJECT_ID> with your project ID.
+        image: us-central1-c-docker.pkg.dev/delta-sanctum-382010/gke-cloud-sql-repo/gke-sql:latest
+        # This app listens on port 8080 for web traffic by default.
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        # This project uses environment variables to determine
+        # how you would like to run your application
+        # To use the Go connector (recommended) - use INSTANCE_CONNECTION_NAME (proj:region:instance)
+        # To use TCP - Setting INSTANCE_HOST will use TCP (e.g., 127.0.0.1)
+        # To use Unix, use INSTANCE_UNIX_SOCKET (e.g., /cloudsql/proj:region:instance)
+        - name: INSTANCE_HOST
+          value: "10.41.0.3"
+        - name: DB_PORT
+          value: "5432"
+        # To use Automatic IAM Authentication (recommended)
+        # use DB_IAM_USER instead of DB_USER
+        # you may also remove the DB_PASS environment variable
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: gke-cloud-sql-secrets
+              key: username
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: gke-cloud-sql-secrets
+              key: password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: gke-cloud-sql-secrets
+              key: database
+      # If you are using the Go connector (recommended), you can
+      # remove cloud-sql-proxy (everything below this line)
+      - name: cloud-sql-proxy
+        # This uses the latest version of the Cloud SQL proxy
+        # It is recommended to use a specific version for production environments.
+        # See: https://github.com/GoogleCloudPlatform/cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:latest
+        command:
+          - "/cloud_sql_proxy"
+
+          # If connecting from a VPC-native GKE cluster, you can use the
+          # following flag to have the proxy connect over private IP
+          - "-ip_address_types=PRIVATE"
+
+          # If you are not connecting with Automatic IAM, you can delete
+          # the following flag.
+          - "-enable_iam_login"
+
+          # tcp should be set to the port the proxy should listen on
+          # and should match the DB_PORT value set above.
+          # Defaults: MySQL: 3306, Postgres: 5432, SQLServer: 1433
+          - "-instances=delta-sanctum-382010:us-central1:quickstart-instance=tcp:5432"
+        securityContext:
+          # The default Cloud SQL proxy image runs as the
+          # "nonroot" user and group (uid: 65532) by default.
+          runAsNonRoot: true
