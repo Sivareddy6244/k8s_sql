@@ -74,9 +74,9 @@ spec:
 
           env:
             - name: POSTGRES_USER
-              value: sivareddy
+              value: siva_user_ac
             - name: POSTGRES_DB
-              value: hello_siva_db
+              value: siva_db
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -179,13 +179,13 @@ spec:
             - name: REDIS_PORT
               value: '6379'
             - name: POSTGRES_HOST
-              value: 172.25.160.2
+              value: 10.41.0.3
             - name: POSTGRES_USER
-              value: sivareddy
+              value: siva_user_ac
             - name: POSTGRES_PORT
               value: '5432'
             - name: POSTGRES_DB
-              value: hello_siva_db
+              value: siva_db
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
