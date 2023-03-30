@@ -16,7 +16,7 @@ spec:
       - name: gke-cloud-sql-app
         # Replace <LOCATION> with your Artifact Registry location (e.g., us-central1).
         # Replace <YOUR_PROJECT_ID> with your project ID.
-        image: us-central1-c-docker.pkg.dev/delta-sanctum-382010/gke-cloud-sql-repo/gke-sql:latest
+        image: us-central1-docker.pkg.dev/delta-sanctum-382010/gke-cloud-sql-repo/gke-sql:latest
         # This app listens on port 8080 for web traffic by default.
         ports:
         - containerPort: 8080
@@ -38,17 +38,17 @@ spec:
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: gke-cloud-sql-secrets
+              name: gke-cloud-sql-secrets-siva
               key: username
         - name: DB_PASS
           valueFrom:
             secretKeyRef:
-              name: gke-cloud-sql-secrets
+              name: gke-cloud-sql-secrets-siva
               key: password
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
-              name: gke-cloud-sql-secrets
+              name: gke-cloud-sql-secrets-siva
               key: database
       # If you are using the Go connector (recommended), you can
       # remove cloud-sql-proxy (everything below this line)
