@@ -16,8 +16,8 @@ spec:
       - name: gke-cloud-sql-app
         # Replace <LOCATION> with your Artifact Registry location (e.g., us-central1).
         # Replace <YOUR_PROJECT_ID> with your project ID.
-        image: us-central1-c-docker.pkg.dev/delta-sanctum-382010/gke-cloud-sql-repo/gke-sql:latest
-        imagePullPolicy: Always
+        image: gcr.io/cloud-marketplace/google/wordpress:5.9
+        #imagePullPolicy: Always
         # This app listens on port 8080 for web traffic by default.
         ports:
         - containerPort: 8080
