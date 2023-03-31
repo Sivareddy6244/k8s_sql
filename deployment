@@ -16,7 +16,7 @@ spec:
       - name: gke-cloud-sql-app
         # Replace <LOCATION> with your Artifact Registry location (e.g., us-central1).
         # Replace <YOUR_PROJECT_ID> with your project ID.
-        image: gcr.io/cloud-marketplace/google/wordpress:5.9
+        image: nginx:1.7.9
         #imagePullPolicy: Always
         # This app listens on port 8080 for web traffic by default.
         ports:
