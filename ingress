@@ -5,6 +5,8 @@ kind: Ingress
 metadata:
   name: wishlist-app-ingress
 
+
+
 spec:
   rules:
     - http: 
