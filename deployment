@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: gke-cloud-sql-quickstart
   
-  
+ 
+ 
+ 
 spec:
   selector:
     matchLabels:
