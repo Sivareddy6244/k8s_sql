@@ -6,7 +6,7 @@ metadata:
  
  
  
-spec:
+spec:sss
   selector:
     matchLabels:
       app: gke-cloud-sql-app
