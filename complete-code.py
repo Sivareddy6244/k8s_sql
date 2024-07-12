@@ -13,6 +13,13 @@ def read_file_content(file_path):
         return file.read()
 
 
+# Function to add line numbers to the code content
+def add_line_numbers(code_content):
+    lines = code_content.split('\n')
+    numbered_lines = [f"Line {i + 1}: {line}" for i, line in enumerate(lines)]
+    return '\n'.join(numbered_lines)
+
+
 # Function to generate content using Vertex AI
 def generate_content_for_review(code_content):
     vertexai.init(project="fast-cascade-369003", location="us-central1")
@@ -88,8 +95,9 @@ def process_directory(directory_path, output_file_path):
     with open(output_file_path, 'w') as output_file:
         for file_path in code_files:
             code_content = read_file_content(file_path)
+            code_content_with_line_numbers = add_line_numbers(code_content)
             print(f"\n\nReviewing file: {file_path}")
-            response_text = generate_content_for_review(code_content)
+            response_text = generate_content_for_review(code_content_with_line_numbers)
             if response_text.strip():
                 output_file.write(f"\n\nReview for file: {file_path}\n")
                 output_file.write(response_text)
