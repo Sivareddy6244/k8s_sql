@@ -1,0 +1,36 @@
+import os
+from google.oauth2.credentials import Credentials
+
+# Function to read the token from the environment file
+def read_token_from_env_file(env_file):
+    with open(env_file, 'r') as file:
+        lines = file.readlines()
+    
+    for line in lines:
+        if 'GOOGLE_OAUTH_ACCESS_TOKEN' in line:
+            return line.split('=')[1].strip().replace('\'', '')
+    
+    return None
+
+# Read the token from the environment file
+token = read_token_from_env_file('gcp.env')
+
+# Dynamically set the token as an environment variable
+if token:
+    os.environ['GOOGLE_OAUTH_ACCESS_TOKEN'] = token
+else:
+    print("Token could not be read or is empty.")
+
+# Retrieve the token from environment variable (for demonstration purposes)
+retrieved_token = os.getenv('GOOGLE_OAUTH_ACCESS_TOKEN')
+
+# Print the token
+print("Retrieved Token:", retrieved_token)
+
+# Create credentials using the token (Example usage)
+if retrieved_token:
+    credentials = Credentials(token)
+    # Use credentials as needed
+    print("Credentials created successfully.")
+else:
+    print("Failed to create credentials due to missing token.")
