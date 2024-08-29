@@ -1,0 +1,32 @@
+copy_changed_files_to_dataform:
+  <<: *default_rules_dataform_branch
+  stage: dataform
+  script:
+    - |
+      # Get the list of all files in the code/dataform/ directory
+      all_files=$(find code/dataform -type f)
+      
+      # Configure git
+      git config --global user.email "${GITHUB_EMAIL}"
+      git config --global user.name "${GITHUB_NAME}"
+
+      # Clone the target branch
+      git clone --branch ${GITHUB_BRANCH} https://${GITHUB_TOKEN}@${GITHUB_REPO} repo
+      cd repo
+
+      # Copy all files from code/dataform/ to the target repository
+      for file in $all_files; do
+        target_path="${file#code/dataform/}"
+        mkdir -p "$(dirname "$target_path")"
+
+        if [[ -f "../$file" ]]; then
+          cp "../$file" "$target_path"
+        else
+          echo "$file does not exist or is renamed. Skipping..."
+        fi
+      done
+
+      # Add, commit, and push changes
+      git add .
+      git commit -m "Sync all files from GitLab"
+      git push origin ${GITHUB_BRANCH}
